@@ -7,6 +7,10 @@ if(!isset($_SESSION['uemail']))
 {
 	header("location:login.php");
 }
+if($_SESSION['utype'] == "user")
+{
+	header("location:register.php");
+}
 
 //// code insert
 //// add code

@@ -17,8 +17,10 @@ $with = $_GET['with'] ?? null;
 // Fetch list of people to chat with
 if ($role == 'user') {
     $sql_list = "SELECT uid, uname FROM user WHERE utype='agent'";
+    $role2="Agent";
 } else {
     $sql_list = "SELECT uid, uname FROM user WHERE utype='user'";
+    $role2="Customer";
 }
 $list_result = $con->query($sql_list);
 
@@ -74,10 +76,10 @@ if ($with) {
     <!-- Chat Column -->
     <div class="chat-col">
         <div class="chat-header">
-            Chat
-            <?php if($with){
+            
+            <?php if($with ){
                 $user_name = $con->query("SELECT uname FROM user WHERE uid=$with")->fetch_assoc()['uname'];
-                echo " with $user_name";
+                echo " $role2 $user_name";
             } ?>
         </div>
 
