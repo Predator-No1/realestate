@@ -4,8 +4,9 @@ include 'config.php';
 
 // Check if logged in
 if (!isset($_SESSION['uid']) || !isset($_SESSION['utype'])) {
-    die("You are not logged in.");
+    header("location:login.php");
 }
+
 
 $me = $_SESSION['uid'];
 $role = $_SESSION['utype']; // 'user' or 'agent'

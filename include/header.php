@@ -1,3 +1,108 @@
+<style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      transition: filter 0.3s ease;
+    }
+
+    body.modal-active #dashboard-content {
+      filter: blur(5px);
+    }
+
+    #chatbot-modal {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.4);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+    }
+
+    #chatbot-box {
+      width: 400px;
+      height: 600px;
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.3);
+      position: relative;
+      overflow: hidden;
+    }
+
+    #close-btn {
+      position: absolute;
+      top: 10px;
+      right: 15px;
+      font-size: 24px;
+      cursor: pointer;
+      z-index: 1;
+    }
+
+    iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+
+    a.discuss-link {
+      color: #007bff;
+      text-decoration: none;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+
+
+    .overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    backdrop-filter: blur(6px);
+    background: rgba(0, 0, 0, 0.3);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 100;
+  }
+
+  /* Chat popup */
+  .chat-popup {
+    position: relative;
+    width: 450px;
+    height: 500px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 25px rgba(0,0,0,0.2);
+    overflow: hidden;
+    animation: fadeIn 0.3s ease;
+  }
+
+  /* Animation */
+  @keyframes fadeIn {
+    from { transform: scale(0.9); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+  }
+
+  /* Close (X) button */
+  .close-btn {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    font-size: 22px;
+    color: #333;
+    cursor: pointer;
+    z-index: 10;
+  }
+
+  .close-btn:hover {
+    color: red;
+  }
+
+  </style>
 <header id="header" class="transparent-header-modern fixed-header-bg-white w-100">
             <div class="top-header bg-secondary">
                 <div class="container">
@@ -42,11 +147,17 @@
                                         <li class="nav-item"> <a class="nav-link" href="property.php">Properties</a> </li>
                                         
                                         <li class="nav-item"> <a class="nav-link" href="agent.php">Agent</a> </li>
+                                        <?php 
+                                        if (isset($_SESSION['uid'])) {?>
+                                            <li class="nav-item"> <a href="#" class="nav-link"  onclick="openChatbot(event)" >chatbot</a> </li>
 
-                                        <li class="nav-item"> <a class="nav-link" href="chatbot.php">chatbot</a> </li>
+                                        <li class="nav-item"> <a class="nav-link" href="chat.php" onclick="openChat(event)" >Discussion</a> </li>
+                                       <?php
+                                           
+                                        }?>
 
-                                        <li class="nav-item"> <a class="nav-link" href="chat.php">Discussion</a> </li>
-                                       
+
+                                        
                                        
 
 										
@@ -78,8 +189,7 @@
             </div>
             
 
-            <button id="open-chat">Chat</button>
-<div id="chat-list" style="display:none; border:1px solid #ccc; padding:10px; margin-top:10px;"></div>
+
 
 <script>
 document.getElementById('open-chat').addEventListener('click', function(){
@@ -91,7 +201,48 @@ document.getElementById('open-chat').addEventListener('click', function(){
             chatList.innerHTML = data;
         });
 });
+
+
+//addd
+function openChatbot(e) {
+    e.preventDefault(); // prevent link navigation
+    document.getElementById('chatbot-modal').style.display = 'flex';
+    document.body.classList.add('modal-active');
+  }
+
+  function closeChatbot() {
+    document.getElementById('chatbot-modal').style.display = 'none';
+    document.body.classList.remove('modal-active');
+  }
+
+
+
+   function openChat(event) {
+      event.preventDefault();
+      document.getElementById('chatOverlay').style.display = 'flex';
+    }
+
+    function closeChat() {
+      document.getElementById('chatOverlay').style.display = 'none';
+    }
 </script>
 
+<!-- addd-->
+ 
+<div id="chatbot-modal">
+  <div id="chatbot-box">
+    <div id="close-btn" onclick="closeChatbot()">×</div>
+    <iframe src="chatbot.php"></iframe>
+  </div>
+</div>
 
-        </header>
+ <!-- Floating chat popup -->
+  <div class="overlay" id="chatOverlay">
+    <div class="chat-popup">
+      <span class="close-btn" onclick="closeChat()">&times;</span>
+      <iframe src="chat.php"></iframe>
+    </div>
+  </div>
+
+
+</header>

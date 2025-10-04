@@ -1,5 +1,8 @@
 <?php
 session_start();
+include 'config.php';
+
+
 
 // Gemini API config
 $apiKey = "AIzaSyClK3bK_EKNlUyk9LnEG4e9ml4cV0J3ruI";  

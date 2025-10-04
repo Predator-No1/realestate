@@ -1,6 +1,7 @@
 <?php
 session_start();
 
+
 // Gemini API config
 $apiKey = "AIzaSyCYyInwVCdeOZTc_YkYNSAfR4dXRwT1Z4M";  
 $model = "gemini-2.5-flash"; 

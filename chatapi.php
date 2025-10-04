@@ -1,72 +1,91 @@
-<?php
-// Gemini chatbot in PHP with error handling
-
-$apiKey = "AIzaSyCYyInwVCdeOZTc_YkYNSAfR4dXRwT1Z4M";  // replace with your Gemini API key
-$model = "gemini-2.5-flash";
-// Get user input
-$userMessage = isset($_POST['message']) ? trim($_POST['message']) : "";
-
-if ($userMessage) {
-    // Build request data
-    $data = [
-        "contents" => [
-            [
-                "role"  => "user",
-                "parts" => [
-                    ["text" => $userMessage]
-                ]
-            ]
-        ]
-    ];
-
-    // Send request to Gemini API
-    $ch = curl_init("https://generativelanguage.googleapis.com/v1beta/models/$model:generateContent?key=$apiKey");
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($ch, CURLOPT_HTTPHEADER, ["Content-Type: application/json"]);
-    curl_setopt($ch, CURLOPT_POST, true);
-    curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
-
-    $response = curl_exec($ch);
-
-    if (curl_errno($ch)) {
-        // Show cURL errors (network issues)
-        $answer = "cURL error: " . curl_error($ch);
-    } else {
-        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        $result = json_decode($response, true);
-
-        if ($httpCode != 200) {
-            // Show API error clearly
-            $answer = "API error (HTTP $httpCode): " . $response;
-        } elseif (isset($result['candidates'][0]['content']['parts'][0]['text'])) {
-            // Normal response
-            $answer = $result['candidates'][0]['content']['parts'][0]['text'];
-        } else {
-            // Show raw response if structure is unexpected
-            $answer = "Unexpected response:\n" . json_encode($result, JSON_PRETTY_PRINT);
-        }
-    }
-
-    curl_close($ch);
-}
-?>
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Gemini Chatbot Debug</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard</title>
+<style>
+  
+  
+
+  /* Overlay for blur effect */
+  .overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    backdrop-filter: blur(6px);
+    background: rgba(0, 0, 0, 0.3);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 100;
+  }
+
+  /* Chat popup */
+  .chat-popup {
+    position: relative;
+    width: 450px;
+    height: 500px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 25px rgba(0,0,0,0.2);
+    overflow: hidden;
+    animation: fadeIn 0.3s ease;
+  }
+
+  /* Animation */
+  @keyframes fadeIn {
+    from { transform: scale(0.9); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+  }
+
+  /* Close (X) button */
+  .close-btn {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    font-size: 22px;
+    color: #333;
+    cursor: pointer;
+    z-index: 10;
+  }
+
+  .close-btn:hover {
+    color: red;
+  }
+
+  iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+  }
+</style>
 </head>
 <body>
-    <h1>Gemini Chatbot (Debug Mode)</h1>
+  <div class="dashboard">
+    <h1>Welcome to Your Dashboard</h1>
+    <a href="#" class="discuss-link" onclick="openChat(event)">Discuss</a>
+  </div>
 
-    <form method="post">
-        <label>Ask something:</label><br>
-        <input type="text" name="message" size="60" value="<?= htmlspecialchars($userMessage ?? '') ?>" required>
-        <button type="submit">Send</button>
-    </form>
+  <!-- Floating chat popup -->
+  <div class="overlay" id="chatOverlay">
+    <div class="chat-popup">
+      <span class="close-btn" onclick="closeChat()">&times;</span>
+      <iframe src="chat.php"></iframe>
+    </div>
+  </div>
 
-    <?php if (!empty($answer)): ?>
-        <h2>Answer:</h2>
-        <pre><?= htmlspecialchars($answer) ?></pre>
-    <?php endif; ?>
+  <script>
+    function openChat(event) {
+      event.preventDefault();
+      document.getElementById('chatOverlay').style.display = 'flex';
+    }
+
+    function closeChat() {
+      document.getElementById('chatOverlay').style.display = 'none';
+    }
+  </script>
 </body>
 </html>
